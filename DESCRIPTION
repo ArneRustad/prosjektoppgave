@@ -1,0 +1,12 @@
+Package: prosjektoppgave
+Type: Package
+Title: Comparing Model Based Vs. Algorithm Based Counterfactuals
+Version: 0.1.0
+Author: Arne Rustad <arner97@gmail.com>
+Maintainer: Arne Rustad <arner97@gmail.com>
+Description: This package implements and compares one model based method for finding counterfactuals 
+    against one algorithmic based method for finding counterfactuals.
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.1.1
