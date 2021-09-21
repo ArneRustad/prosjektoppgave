@@ -1,4 +1,5 @@
 library(data.table)
+library()
 n = 1000
 a = rnorm(n, 5, 5)
 b = runif(n, 0, 10)
@@ -12,7 +13,9 @@ fit = lm(y ~ a + b + c)
 fit
 library(iml)
 library(R6)
+
 mod = Predictor$new(fit, data = df, predict.function = predict.lm)
+
 
 simpleCounterfactuals = R6::R6Class(
   classname = "simpleCounterfactuals",
@@ -30,35 +33,23 @@ simpleCounterfactuals = R6::R6Class(
       self$x.interest = x.interest
       self$target = target
     },
-    evaluate = function(x.interest = self$x.interest) {
-      if (missing(x.interest)) {
-        self$x.interest = x.interest
-      } else {
-        x.interest = self$x.interest
+    evaluate = function(x.interest = self$x.interest, target = self$target) {
+      print(self$x.interest)
+      print(self$predictor$predict(x.interest))
+      print(target)
+      cols = colnames(x.interest)
+      fr = function(x, cols) {
+        x.dt = as.data.table(matrix(x, nrow = 1, ncol = 3, dimnames = list(NULL, cols) ))
+        return(abs(self$predictor$predict(x.dt) - self$target))
       }
-      result = optim(x.interest,
-                     function(x) return(abs(self$predictor$predict(x) - self$target)))
-      result
+      result = optim(as.vector(x.interest),
+                     fr, NULL, cols)
+      result$par
     }
   )
 )
 
-cf.simple = simpleCounterfactuals$new(mod, mod$data$X[1,])
-cf.simple$x.interest
+cf.simple = simpleCounterfactuals$new(mod, mod$data$X[2,], 21)
 cf.simple$evaluate()
-mod$predict.function(mod$data$X[1,])
 
 
-?R6Class
-mod$print()
-
-View(mod$data)
-
-mod$data$X
-
-?arrange
-
-?remove
-?cut
-
-?dplyr::
