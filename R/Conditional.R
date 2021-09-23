@@ -25,7 +25,7 @@ Conditional = R6Class(
       xj_samples = lapply(1:nrow(X), function(i) {
         node = X_nodes[i, "node"]
         data_ids = which(private$data_nodes$node == node)
-        data_ids = setdiff(data_ids, i)
+        data_ids = setdiff(data_ids, i) # Question, why choose not to use current value as part of the sampling pool
         data_ids_sample = data_ids[sample.int(length(data_ids), size = size, replace = TRUE)]
         xj = self$data[data_ids_sample, self$feature, with = FALSE]
         data.frame(t(xj))
@@ -78,6 +78,7 @@ Conditional = R6Class(
         } else {
           if (is.null(private$data_nodes)) {
             private$data_nodes = self$cnode(self$data)
+            print(private$data_nodes)
           }
           X_nodes = self$cnode(X)
           len = min(max(xgrid)- min(xgrid)+1, 100)
@@ -121,6 +122,7 @@ Conditional = R6Class(
       if(inherits(cmodel, "trafotree")) {
         # case of numerical feature
         print("inherits")
+
         quants = predict(cmodel, newdata = X, type = "quantile", prob = prob)
         print("quants")
         quants = data.frame(t(quants))
